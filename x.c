@@ -666,8 +666,8 @@ xhints(void)
 	sizeh->width = win.w;
 	sizeh->height_inc = win.ch;
 	sizeh->width_inc = win.cw;
-	sizeh->base_height = 2 * borderpx;
-	sizeh->base_width = 2 * borderpx;
+	sizeh->base_height = 0;
+	sizeh->base_width = 0;
 	if (xw.isfixed) {
 		sizeh->flags |= PMaxSize | PMinSize;
 		sizeh->min_width = sizeh->max_width = win.w;
@@ -893,8 +893,8 @@ xinit(void)
 	xloadcols();
 
 	/* adjust fixed window geometry */
-	win.w = 2 * borderpx + term.col * win.cw;
-	win.h = 2 * borderpx + term.row * win.ch;
+	win.w = term.col * win.cw;
+	win.h = term.row * win.ch;
 	if (xw.gm & XNegative)
 		xw.l += DisplayWidth(xw.dpy, xw.scr) - win.w - 2;
 	if (xw.gm & YNegative)
@@ -986,7 +986,7 @@ xinit(void)
 int
 xmakeglyphfontspecs(XftGlyphFontSpec *specs, const Glyph *glyphs, int len, int x, int y)
 {
-	float winx = borderpx + x * win.cw, winy = borderpx + y * win.ch, xp, yp;
+	float winx = x * win.cw, winy = y * win.ch, xp, yp;
 	ushort mode, prevmode = USHRT_MAX;
 	Font *font = &dc.font;
 	int frcflags = FRC_NORMAL;
@@ -1122,7 +1122,7 @@ void
 xdrawglyphfontspecs(const XftGlyphFontSpec *specs, Glyph base, int len, int x, int y)
 {
 	int charlen = len * ((base.mode & ATTR_WIDE) ? 2 : 1);
-	int winx = borderpx + x * win.cw, winy = borderpx + y * win.ch,
+	int winx = x * win.cw, winy = y * win.ch,
 	    width = charlen * win.cw;
 	Color *fg, *bg, *temp, revfg, revbg, truefg, truebg;
 	XRenderColor colfg, colbg;
@@ -1211,7 +1211,7 @@ xdrawglyphfontspecs(const XftGlyphFontSpec *specs, Glyph base, int len, int x, i
 
 	/* Intelligent cleaning up of the borders. */
 	if (x == 0) {
-		xclear(0, (y == 0)? 0 : winy, borderpx,
+		xclear(0, (y == 0)? 0 : winy, 0,
 			winy + win.ch + ((y >= term.row-1)? win.h : 0));
 	}
 	if (x + charlen >= term.col) {
@@ -1219,7 +1219,7 @@ xdrawglyphfontspecs(const XftGlyphFontSpec *specs, Glyph base, int len, int x, i
 			((y >= term.row-1)? win.h : (winy + win.ch)));
 	}
 	if (y == 0)
-		xclear(winx, 0, winx + width, borderpx);
+		xclear(winx, 0, winx + width, 0);
 	if (y == term.row-1)
 		xclear(winx, winy + win.ch, winx + width, win.h);
 
@@ -1331,35 +1331,35 @@ xdrawcursor(void)
 		case 3: /* Blinking Underline */
 		case 4: /* Steady Underline */
 			XftDrawRect(xw.draw, &drawcol,
-					borderpx + curx * win.cw,
-					borderpx + (term.c.y + 1) * win.ch - \
+					curx * win.cw,
+					(term.c.y + 1) * win.ch - \
 						cursorthickness,
 					win.cw, cursorthickness);
 			break;
 		case 5: /* Blinking bar */
 		case 6: /* Steady bar */
 			XftDrawRect(xw.draw, &drawcol,
-					borderpx + curx * win.cw,
-					borderpx + term.c.y * win.ch,
+					curx * win.cw,
+					term.c.y * win.ch,
 					cursorthickness, win.ch);
 			break;
 		}
 	} else {
 		XftDrawRect(xw.draw, &drawcol,
-				borderpx + curx * win.cw,
-				borderpx + term.c.y * win.ch,
+				curx * win.cw,
+				term.c.y * win.ch,
 				win.cw - 1, 1);
 		XftDrawRect(xw.draw, &drawcol,
-				borderpx + curx * win.cw,
-				borderpx + term.c.y * win.ch,
+				curx * win.cw,
+				term.c.y * win.ch,
 				1, win.ch - 1);
 		XftDrawRect(xw.draw, &drawcol,
-				borderpx + (curx + 1) * win.cw - 1,
-				borderpx + term.c.y * win.ch,
+				(curx + 1) * win.cw - 1,
+				term.c.y * win.ch,
 				1, win.ch - 1);
 		XftDrawRect(xw.draw, &drawcol,
-				borderpx + curx * win.cw,
-				borderpx + (term.c.y + 1) * win.ch - 1,
+				curx * win.cw,
+				(term.c.y + 1) * win.ch - 1,
 				win.cw, 1);
 	}
 	oldx = curx, oldy = term.c.y;

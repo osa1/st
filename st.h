@@ -238,7 +238,6 @@ extern double defaultfontsize;
 
 /* config.h globals */
 extern char font[];
-extern int borderpx;
 extern float cwscale;
 extern float chscale;
 extern unsigned int doubleclicktimeout;

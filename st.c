@@ -435,7 +435,6 @@ selinit(void)
 int
 x2col(int x)
 {
-	x -= borderpx;
 	x /= win.cw;
 
 	return LIMIT(x, 0, term.col-1);
@@ -444,7 +443,6 @@ x2col(int x)
 int
 y2row(int y)
 {
-	y -= borderpx;
 	y /= win.ch;
 
 	return LIMIT(y, 0, term.row-1);
@@ -2685,8 +2683,8 @@ cresize(int width, int height)
 	if (height != 0)
 		win.h = height;
 
-	col = (win.w - 2 * borderpx) / win.cw;
-	row = (win.h - 2 * borderpx) / win.ch;
+	col = win.w / win.cw;
+	row = win.h / win.ch;
 
 	tresize(col, row);
 	xresize(col, row);
