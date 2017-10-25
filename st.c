@@ -128,6 +128,8 @@ typedef struct {
 /* function definitions used in config.h */
 static void clipcopy(const Arg *);
 static void clippaste(const Arg *);
+static void sscrolldown(const Arg *);
+static void sscrollup(const Arg *);
 static void kscrolldown(const Arg *);
 static void kscrollup(const Arg *);
 static void numlock(const Arg *);
@@ -158,6 +160,8 @@ static void strhandle(void);
 static void strparse(void);
 static void strreset(void);
 
+static void scrollup_single(int);
+static void scrolldown_single(int);
 static void tprinter(char *, size_t);
 static void tdumpsel(void);
 static void tdumpline(int);
@@ -1068,6 +1072,22 @@ tswapscreen(void)
 }
 
 void
+scrolldown_single(int n)
+{
+	if (term.scr > 0) {
+		term.scr -= n;
+		selscroll(0, -n);
+		tfulldirt();
+	}
+}
+
+void
+sscrolldown(const Arg* a)
+{
+    scrolldown_single(a->i);
+}
+
+void
 kscrolldown(const Arg* a)
 {
 	int n = a->i;
@@ -1078,11 +1098,23 @@ kscrolldown(const Arg* a)
 	if (n > term.scr)
 		n = term.scr;
 
-	if (term.scr > 0) {
-		term.scr -= n;
-		selscroll(0, -n);
+    scrolldown_single(n);
+}
+
+void
+scrollup_single(int n)
+{
+	if (term.scr <= HISTSIZE-n) {
+		term.scr += n;
+		selscroll(0, n);
 		tfulldirt();
 	}
+}
+
+void
+sscrollup(const Arg* a)
+{
+    scrollup_single(a->i);
 }
 
 void
@@ -1093,11 +1125,7 @@ kscrollup(const Arg* a)
 	if (n < 0)
 		n = term.row + n;
 
-	if (term.scr <= HISTSIZE-n) {
-		term.scr += n;
-		selscroll(0, n);
-		tfulldirt();
-	}
+    scrollup_single(n);
 }
 
 void

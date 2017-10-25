@@ -178,6 +178,8 @@ Shortcut shortcuts[] = {
 	{ TERMMOD,              XK_I,           iso14755,       {.i =  0} },
 	{ ShiftMask,            XK_Page_Up,     kscrollup,      {.i = -1} },
 	{ ShiftMask,            XK_Page_Down,   kscrolldown,    {.i = -1} },
+	{ ShiftMask,            XK_Up,          sscrollup,      {.i =  1} },
+	{ ShiftMask,            XK_Down,        sscrolldown,    {.i =  1} },
 };
 
 /*
