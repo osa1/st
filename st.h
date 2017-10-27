@@ -253,7 +253,6 @@ extern int allowaltscreen;
 extern unsigned int xfps;
 extern unsigned int actionfps;
 extern unsigned int cursorthickness;
-extern unsigned int blinktimeout;
 extern char termname[];
 extern const char *colorname[];
 extern size_t colornamelen;

@@ -1624,8 +1624,8 @@ run(void)
 	XEvent ev;
 	int w = win.w, h = win.h;
 	fd_set rfd;
-	int xfd = XConnectionNumber(xw.dpy), xev, blinkset = 0, dodraw = 0;
-	struct timespec drawtimeout, *tv = NULL, now, last, lastblink;
+	int xfd = XConnectionNumber(xw.dpy), xev, dodraw = 0;
+	struct timespec drawtimeout, *tv = NULL, now, last;
 	long deltatime;
 
 	/* Waiting for window mapping */
@@ -1649,7 +1649,6 @@ run(void)
 	ttyresize();
 
 	clock_gettime(CLOCK_MONOTONIC, &last);
-	lastblink = last;
 
 	for (xev = actionfps;;) {
 		FD_ZERO(&rfd);
@@ -1663,11 +1662,6 @@ run(void)
 		}
 		if (FD_ISSET(cmdfd, &rfd)) {
 			ttyread();
-			if (blinktimeout) {
-				blinkset = tattrset(ATTR_BLINK);
-				if (!blinkset)
-					MODBIT(term.mode, 0, MODE_BLINK);
-			}
 		}
 
 		if (FD_ISSET(xfd, &rfd))
@@ -1679,12 +1673,6 @@ run(void)
 		tv = &drawtimeout;
 
 		dodraw = 0;
-		if (blinktimeout && TIMEDIFF(now, lastblink) > blinktimeout) {
-			tsetdirtattr(ATTR_BLINK);
-			term.mode ^= MODE_BLINK;
-			lastblink = now;
-			dodraw = 1;
-		}
 		deltatime = TIMEDIFF(now, last);
 		if (deltatime > 1000 / (xev ? xfps : actionfps)) {
 			dodraw = 1;
@@ -1706,22 +1694,7 @@ run(void)
 			if (xev && !FD_ISSET(xfd, &rfd))
 				xev--;
 			if (!FD_ISSET(cmdfd, &rfd) && !FD_ISSET(xfd, &rfd)) {
-				if (blinkset) {
-					if (TIMEDIFF(now, lastblink) \
-							> blinktimeout) {
-						drawtimeout.tv_nsec = 1000;
-					} else {
-						drawtimeout.tv_nsec = (1E6 * \
-							(blinktimeout - \
-							TIMEDIFF(now,
-								lastblink)));
-					}
-					drawtimeout.tv_sec = \
-					    drawtimeout.tv_nsec / 1E9;
-					drawtimeout.tv_nsec %= (long)1E9;
-				} else {
-					tv = NULL;
-				}
+                tv = NULL;
 			}
 		}
 	}
