@@ -126,18 +126,17 @@ typedef struct {
 } Key;
 
 /* function definitions used in config.h */
-static void clipcopy(const Arg *);
-static void clippaste(const Arg *);
-static void sscrolldown(const Arg *);
-static void sscrollup(const Arg *);
-static void kscrolldown(const Arg *);
-static void kscrollup(const Arg *);
-static void numlock(const Arg *);
-static void selpaste(const Arg *);
-static void zoom(const Arg *);
+static int clipcopy(const Arg *);
+static int clippaste(const Arg *);
+static int sscrolldown(const Arg *);
+static int sscrollup(const Arg *);
+static int kscrolldown(const Arg *);
+static int kscrollup(const Arg *);
+static int numlock(const Arg *);
+static int selpaste(const Arg *);
+static int zoom(const Arg *);
 static void zoomabs(const Arg *);
-static void zoomreset(const Arg *);
-static void sendbreak(const Arg *);
+static int zoomreset(const Arg *);
 
 /* config.h for applying patches and the configuration. */
 #include "config.h"
@@ -156,8 +155,8 @@ static void strhandle(void);
 static void strparse(void);
 static void strreset(void);
 
-static void scrollup_single(int);
-static void scrolldown_single(int);
+static int scrollup_single(int);
+static int scrolldown_single(int);
 static void tprinter(char *, size_t);
 static void tdumpsel(void);
 static void tdumpline(int);
@@ -634,22 +633,25 @@ getsel(void)
 	return str;
 }
 
-void
+int
 selpaste(const Arg *dummy)
 {
 	xselpaste();
+    return 1;
 }
 
-void
+int
 clipcopy(const Arg *dummy)
 {
 	xclipcopy();
+    return 1;
 }
 
-void
+int
 clippaste(const Arg *dummy)
 {
 	xclippaste();
+    return 1;
 }
 
 void
@@ -1067,23 +1069,29 @@ tswapscreen(void)
 	tfulldirt();
 }
 
-void
+int
 scrolldown_single(int n)
 {
+    if (IS_SET(MODE_ALTSCREEN)) {
+        return 0;
+    }
+
 	if (term.scr > 0) {
 		term.scr -= n;
 		selscroll(0, -n);
 		tfulldirt();
 	}
+
+    return 1;
 }
 
-void
+int
 sscrolldown(const Arg* a)
 {
-    scrolldown_single(a->i);
+    return scrolldown_single(a->i);
 }
 
-void
+int
 kscrolldown(const Arg* a)
 {
 	int n = a->i;
@@ -1094,26 +1102,32 @@ kscrolldown(const Arg* a)
 	if (n > term.scr)
 		n = term.scr;
 
-    scrolldown_single(n);
+    return scrolldown_single(n);
 }
 
-void
+int
 scrollup_single(int n)
 {
+    if (IS_SET(MODE_ALTSCREEN)) {
+        return 0;
+    }
+
 	if (term.scr <= HISTSIZE-n) {
 		term.scr += n;
 		selscroll(0, n);
 		tfulldirt();
 	}
+
+    return 1;
 }
 
-void
+int
 sscrollup(const Arg* a)
 {
-    scrollup_single(a->i);
+    return scrollup_single(a->i);
 }
 
-void
+int
 kscrollup(const Arg* a)
 {
 	int n = a->i;
@@ -1121,7 +1135,7 @@ kscrollup(const Arg* a)
 	if (n < 0)
 		n = term.row + n;
 
-    scrollup_single(n);
+    return scrollup_single(n);
 }
 
 void
@@ -2050,13 +2064,6 @@ strreset(void)
 }
 
 void
-sendbreak(const Arg *arg)
-{
-	if (tcsendbreak(cmdfd, 0))
-		perror("Error sending break");
-}
-
-void
 tprinter(char *s, size_t len)
 {
 	if (iofd != -1 && xwrite(iofd, s, len) < 0) {
@@ -2619,13 +2626,15 @@ tresize(int col, int row)
 	term.c = c;
 }
 
-void
+int
 zoom(const Arg *arg)
 {
 	Arg larg;
 
 	larg.f = usedfontsize + arg->f;
 	zoomabs(&larg);
+
+    return 1;
 }
 
 void
@@ -2639,7 +2648,7 @@ zoomabs(const Arg *arg)
 	xhints();
 }
 
-void
+int
 zoomreset(const Arg *arg)
 {
 	Arg larg;
@@ -2648,6 +2657,8 @@ zoomreset(const Arg *arg)
 		larg.f = defaultfontsize;
 		zoomabs(&larg);
 	}
+
+    return 1;
 }
 
 void
@@ -2669,10 +2680,11 @@ match(uint mask, uint state)
 	return mask == XK_ANY_MOD || mask == (state & ~ignoremod);
 }
 
-void
+int
 numlock(const Arg *dummy)
 {
 	term.numlock ^= 1;
+    return 1;
 }
 
 char*

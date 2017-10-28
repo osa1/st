@@ -184,7 +184,8 @@ typedef union {
 typedef struct {
 	uint mod;
 	KeySym keysym;
-	void (*func)(const Arg *);
+    // returns whether the key was handled or not
+	int (*func)(const Arg *);
 	const Arg arg;
 } Shortcut;
 

@@ -1557,8 +1557,10 @@ kpress(XEvent *ev)
 	/* 1. shortcuts */
 	for (bp = shortcuts; bp < shortcuts + shortcutslen; bp++) {
 		if (ksym == bp->keysym && match(bp->mod, e->state)) {
-			bp->func(&(bp->arg));
-			return;
+			if (bp->func(&(bp->arg)))
+                return;
+            else
+                break;
 		}
 	}
 
