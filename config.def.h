@@ -118,7 +118,6 @@ unsigned int defaultunderline = 7;
  * 2: Block ("█")
  * 4: Underline ("_")
  * 6: Bar ("|")
- * 7: Snowman ("☃")
  */
 unsigned int cursorshape = 2;
 
