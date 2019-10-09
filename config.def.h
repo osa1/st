@@ -29,7 +29,7 @@ float chscale = 1.0;
 /*
  * word delimiter string
  */
-static char worddelimiters[] = " `'\"()[]{},?/:";
+static char worddelimiters[] = " `'\"()[]{},?/:=<>";
 
 /* selection timeouts (in milliseconds) */
 unsigned int doubleclicktimeout = 300;
