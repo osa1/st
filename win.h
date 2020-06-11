@@ -1,9 +1,9 @@
 /* See LICENSE for license details. */
 
 /* X modifiers */
-#define XK_ANY_MOD    UINT_MAX
-#define XK_NO_MOD     0
-#define XK_SWITCH_MOD (1<<13)
+#define XK_ANY_MOD UINT_MAX
+#define XK_NO_MOD 0
+#define XK_SWITCH_MOD (1 << 13)
 
 typedef XftGlyphFontSpec GlyphFontSpec;
 
@@ -17,14 +17,14 @@ void xclippaste(void);
 void xhints(void);
 void xinit(void);
 void xloadcols(void);
-int xsetcolorname(int, const char *);
-void xloadfonts(char *, double);
+int xsetcolorname(int, const char*);
+void xloadfonts(char*, double);
 void xsetenv(void);
-void xsettitle(char *);
+void xsettitle(char*);
 void xsetpointermotion(int);
 void xseturgency(int);
 void xunloadfonts(void);
 void xresize(int, int);
 void xselpaste(void);
 unsigned long xwinid(void);
-void xsetsel(char *, Time);
+void xsetsel(char*, Time);
