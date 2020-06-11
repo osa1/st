@@ -107,12 +107,12 @@ const char *colorname[] = {
 
 /*
  * Default colors (colorname index)
- * foreground, background, cursor
+ * foreground, background, cursor, reverse cursor
  */
 unsigned int defaultfg = 257;
 unsigned int defaultbg = 256;
-unsigned int defaultcs = 257;
-unsigned int defaultrcs = 257;
+unsigned int defaultcs = 257; // cursor
+unsigned int defaultrcs = 257; // reverse cursor
 
 /*
  * Colors used, when the specific fg == defaultfg. So in reverse mode this

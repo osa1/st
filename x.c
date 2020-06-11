@@ -1310,6 +1310,8 @@ xdrawcursor(void)
 	/*
 	 * Select the right color for the right mode.
 	 */
+        /* (osa) No idea what 'reverse' mode is, updating cursor color in else
+         * branch */
 	if (IS_SET(MODE_REVERSE)) {
 		g.mode |= ATTR_REVERSE;
 		g.bg = defaultfg;
@@ -1326,7 +1328,15 @@ xdrawcursor(void)
 			g.fg = defaultfg;
 			g.bg = defaultrcs;
 		} else {
+                        // (osa) This is the case we're interested in. Not sure what other
+                        // cases are about.
+                        // (osa) drawcol is not used in block cursor as we don't use
+                        // XftDrawRect for that
 			drawcol = dc.col[defaultcs];
+                        uint32_t text_fg = term.line[term.c.y][curx].fg;
+                        uint32_t text_bg = term.line[term.c.y][curx].bg;
+                        g.fg = text_bg;
+                        g.bg = text_fg;
 		}
 	}
 
