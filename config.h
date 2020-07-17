@@ -76,8 +76,9 @@ char termname[] = "st-256color";
  */
 static unsigned int tabspaces = 8;
 
+#include "nord.h"
 // #include "dracula.h"
-#include "iceberg.h"
+// #include "iceberg.h"
 
 /*
  * Colors used, when the specific fg == defaultfg. So in reverse mode this
