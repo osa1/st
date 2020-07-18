@@ -76,8 +76,8 @@ char termname[] = "st-256color";
  */
 static unsigned int tabspaces = 8;
 
-#include "nord.h"
-// #include "dracula.h"
+// #include "nord.h"
+#include "dracula.h"
 // #include "iceberg.h"
 
 /*
